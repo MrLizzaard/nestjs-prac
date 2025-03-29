@@ -1,3 +1,4 @@
+import { ExampleService } from './example.service';
 import {
   BadGatewayException,
   BadRequestException,
@@ -35,6 +36,7 @@ import { CreateExampleDto } from './dto/create-example.dto';
 
 @Controller('example')
 export class ExampleController {
+  constructor(private readonly exampleService: ExampleService) {}
   @Get()
   @ApiOperation({ summary: 'GET API 예시' })
   @ApiQuery({ name: 'name', required: true, description: '이름' })
@@ -76,6 +78,12 @@ export class ExampleController {
   postExample(@Body() createExampleDto: CreateExampleDto) {
     console.log(createExampleDto);
     return { key: 'value' };
+  }
+
+  @Post('dummy')
+  @ApiOperation({ summary: '더미데이터 생성' })
+  createDummy() {
+    return this.exampleService.createDummy(); // 엔티티를 저장합니다.
   }
 
   @Put()
