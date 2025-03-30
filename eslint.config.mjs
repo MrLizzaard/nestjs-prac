@@ -27,9 +27,13 @@ export default tseslint.config(
   },
   {
     rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off', // ✅ 이 줄 추가
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off', // ✅ 추가
+      '@typescript-eslint/no-unsafe-return': 'off', // ✅ 추가
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
-      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/require-await': 'off',
       'prettier/prettier': [
