@@ -14,6 +14,11 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 3000;
 
+  app.enableCors({
+    origin: ['http://localhost:3000'], // ⭐️ 허용할 프론트 주소
+    credentials: true, // ⭐️ 쿠키, 인증 헤더 허용할 때
+  });
+
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(
     new LoggingInterceptor(),
