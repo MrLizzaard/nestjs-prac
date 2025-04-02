@@ -24,4 +24,20 @@ export class UsersService {
   async updateRefreshToken(userId: number, refreshToken: string) {
     await this.userRepo.update(userId, { refreshToken });
   }
+
+  async findByOauth(provider: string, oauthId: string) {
+    return this.userRepo.findOne({
+      where: { oauthProvider: provider, oauthId },
+    });
+  }
+
+  async createOAuthUser({ oauthProvider, oauthId, email, name }: any) {
+    const user = this.userRepo.create({
+      oauthProvider,
+      oauthId,
+      email,
+      name,
+    });
+    return this.userRepo.save(user);
+  }
 }
