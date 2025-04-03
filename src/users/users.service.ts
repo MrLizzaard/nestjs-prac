@@ -41,4 +41,8 @@ export class UsersService {
     const user = this.userRepo.create(userdto);
     return this.userRepo.save(user);
   }
+
+  async save(user: User) {
+    return this.userRepo.save(user);
+  }
 }

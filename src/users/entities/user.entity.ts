@@ -1,5 +1,4 @@
-import { OauthProvider } from 'src/constants/oauth-provider';
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
@@ -18,7 +17,8 @@ export class User {
   @Column({ type: 'text', nullable: true })
   refreshToken: string | null;
 
-  @Column({ type: 'enum', enum: OauthProvider, nullable: true })
+  // @Column({ type: 'enum', enum: OauthProvider, nullable: true })
+  @Column({ nullable: true })
   oauthProvider: string | null;
 
   @Column({ nullable: true })

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from 'src/interface/token-payload.interface';
@@ -36,7 +36,22 @@ export class OauthService {
     );
 
     if (!user) {
-      user = await this.usersService.createOAuthUser(oauthUser);
+      // 동일 이메일로 로컬 가입한 계정이 있는지 확인
+      const existingUser = await this.usersService.findByEmail(oauthUser.email);
+
+      if (existingUser) {
+        // 👉 이미 로컬 계정 존재 → 병합 or 안내
+        // 1. 병합: oauth 정보 추가 (자동 병합)
+        existingUser.oauthProvider = oauthUser.oauthProvider;
+        existingUser.oauthId = oauthUser.oauthId;
+        user = await this.usersService.save(existingUser);
+
+        // ❗ or 안내 메시지: '이미 존재하는 이메일입니다. 기존 로그인 방식으로 로그인해주세요.'
+        throw new ConflictException('이미 존재하는 이메일입니다.');
+      } else {
+        // 처음 보는 사용자면 새로 생성
+        user = await this.usersService.createOAuthUser(oauthUser);
+      }
     }
 
     // 2. JWT payload 구성
