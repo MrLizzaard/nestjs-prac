@@ -6,7 +6,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ExampleModule } from './example/example.module';
 import { UsersModule } from './users/users.module';
-import { ChatbotModule } from './chatbot/chatbot.module';
+import { ChatbotModule } from './modules/chatbot/chatbot.module';
+import { DreamLottoModule } from './modules/dream-lotto/dream-lotto.module';
+import { FrequencyModule } from './modules/frequency/frequency.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { ChatbotModule } from './chatbot/chatbot.module';
     AuthModule,
     UsersModule,
     ChatbotModule,
+    DreamLottoModule,
+    FrequencyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
