@@ -1,14 +1,28 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { TokenPayload } from 'src/interface/token-payload.interface';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
+  private readonly accessTokenOptions;
+  private readonly refreshTokenOptions;
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.accessTokenOptions = {
+      secret: this.configService.get('JWT_ACCESS_SECRET'),
+      expiresIn: this.configService.get('JWT_ACCESS_EXPIRES_IN'),
+    };
+    this.refreshTokenOptions = {
+      secret: this.configService.get('JWT_REFRESH_SECRET'),
+      expiresIn: this.configService.get('JWT_REFRESH_EXPIRES_IN'),
+    };
+  }
 
   async login(email: string, password: string) {
     if (email !== 'dhk21512@gmail.com' || password !== '1234') {
@@ -18,10 +32,11 @@ export class AuthService {
     }
 
     const payload: TokenPayload = { email, id: 1 };
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' }); // 15분 만료
-    const refreshToken = this.jwtService.sign(payload, {
-      expiresIn: '7d', // 7일 만료
-    });
+    const accessToken = this.jwtService.sign(payload, this.accessTokenOptions); // 15분 만료
+    const refreshToken = this.jwtService.sign(
+      payload,
+      this.refreshTokenOptions,
+    ); // 7일 만료
 
     // ✅ UserService 이용해서 refreshToken 저장
     await this.usersService.updateRefreshToken(1, refreshToken); // 유저 ID: 1 기준
@@ -40,7 +55,7 @@ export class AuthService {
 
       const newAccessToken = this.jwtService.sign(
         { email: user.email, id: user.id },
-        { expiresIn: '15m' },
+        this.accessTokenOptions,
       );
 
       return { accessToken: newAccessToken };

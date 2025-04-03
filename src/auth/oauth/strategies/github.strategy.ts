@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-github2';
 import { VerifyCallback } from 'passport-oauth2';
+import { OauthProvider } from 'src/constants/oauth-provider';
 
 @Injectable()
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
@@ -23,7 +24,7 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   ) {
     const { id, username, emails } = profile;
     const user = {
-      oauthProvider: 'github',
+      oauthProvider: OauthProvider.GITHUB,
       oauthId: id,
       email: emails?.[0]?.value || null,
       name: username,

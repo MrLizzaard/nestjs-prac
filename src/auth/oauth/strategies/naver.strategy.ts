@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { Strategy, Profile } from 'passport-naver-v2';
 import { VerifyCallback } from 'passport-oauth2';
+import { OauthProvider } from 'src/constants/oauth-provider';
 
 @Injectable()
 export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
@@ -23,7 +24,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
     const { id, email, name } = profile;
 
     const user = {
-      oauthProvider: 'naver',
+      oauthProvider: OauthProvider.NAVER,
       oauthId: id,
       email: email || null,
       name: name || '네이버 사용자',

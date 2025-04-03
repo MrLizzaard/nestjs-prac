@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+import { CreateOAuthUserDto } from './dto/create-oauth-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -22,22 +24,21 @@ export class UsersService {
   }
 
   async updateRefreshToken(userId: number, refreshToken: string) {
-    await this.userRepo.update(userId, { refreshToken });
+    const hashedToken = await bcrypt.hash(refreshToken, 10);
+    await this.userRepo.update(userId, { refreshToken: hashedToken });
+
+    // 비교할때 사용
+    // const isValid = await bcrypt.compare(incomingRefreshToken, user.refreshToken);
   }
 
-  async findByOauth(provider: string, oauthId: string) {
+  async findByOauth(provider: string, oauthId: string): Promise<User | null> {
     return this.userRepo.findOne({
       where: { oauthProvider: provider, oauthId },
     });
   }
 
-  async createOAuthUser({ oauthProvider, oauthId, email, name }: any) {
-    const user = this.userRepo.create({
-      oauthProvider,
-      oauthId,
-      email,
-      name,
-    });
+  async createOAuthUser(userdto: CreateOAuthUserDto) {
+    const user = this.userRepo.create(userdto);
     return this.userRepo.save(user);
   }
 }
