@@ -3,11 +3,15 @@ import { AuthGuard } from '@nestjs/passport';
 import { OauthService } from './oauth.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class OauthController {
-  constructor(private readonly oauthService: OauthService) {}
+  constructor(
+    private readonly oauthService: OauthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
@@ -21,7 +25,7 @@ export class OauthController {
     const { accessToken, refreshToken } =
       await this.oauthService.handleOAuthLogin(req.user);
 
-    const redirectUrl = `http://localhost:3008/oauth-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+    const redirectUrl = `${this.configService.get('FRONTEND_URL')}?accessToken=${accessToken}&refreshToken=${refreshToken}`;
 
     return res.redirect(redirectUrl);
   }
@@ -38,7 +42,7 @@ export class OauthController {
     const { accessToken, refreshToken } =
       await this.oauthService.handleOAuthLogin(req.user);
 
-    const redirectUrl = `http://localhost:3008/oauth-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+    const redirectUrl = `${this.configService.get('FRONTEND_URL')}/oauth-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
 
     return res.redirect(redirectUrl);
   }
@@ -55,7 +59,7 @@ export class OauthController {
     const { accessToken, refreshToken } =
       await this.oauthService.handleOAuthLogin(req.user);
 
-    const redirectUrl = `http://localhost:3008/oauth-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+    const redirectUrl = `${this.configService.get('FRONTEND_URL')}/oauth-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
 
     return res.redirect(redirectUrl);
   }
