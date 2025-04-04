@@ -23,12 +23,20 @@ export class UsersService {
     return this.userRepo.findOne({ where: { email } });
   }
 
-  async updateRefreshToken(userId: number, refreshToken: string) {
-    const hashedToken = await bcrypt.hash(refreshToken, 10);
-    await this.userRepo.update(userId, { refreshToken: hashedToken });
+  async updateRefreshToken(userId: number, refreshToken: string | null) {
+    try {
+      if (!refreshToken) {
+        await this.userRepo.update(userId, { refreshToken: null });
+      } else {
+        const hashedToken = await bcrypt.hash(refreshToken, 10);
+        await this.userRepo.update(userId, { refreshToken: hashedToken });
+      }
 
-    // 비교할때 사용
-    // const isValid = await bcrypt.compare(incomingRefreshToken, user.refreshToken);
+      // 비교할때 사용
+      // const isValid = await bcrypt.compare(incomingRefreshToken, user.refreshToken);
+    } catch (error) {
+      console.log('Error updating refresh token:', error);
+    }
   }
 
   async findByOauth(provider: string, oauthId: string): Promise<User | null> {

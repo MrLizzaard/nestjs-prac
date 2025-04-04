@@ -22,12 +22,12 @@ export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
     profile: Profile,
     done: VerifyCallback,
   ) {
-    const { id, username, emails } = profile;
+    const { id, displayName, emails } = profile;
     const user = {
       oauthProvider: OauthProvider.GITHUB,
       oauthId: id,
       email: emails?.[0]?.value || null,
-      name: username,
+      name: displayName,
     };
     done(null, user);
   }

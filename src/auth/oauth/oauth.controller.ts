@@ -1,7 +1,8 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { OauthService } from './oauth.service';
 import { ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -16,8 +17,13 @@ export class OauthController {
 
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
-  async googleRedirect(@Req() req) {
-    return this.oauthService.handleOAuthLogin(req.user);
+  async googleRedirect(@Req() req: any, @Res() res: Response) {
+    const { accessToken, refreshToken } =
+      await this.oauthService.handleOAuthLogin(req.user);
+
+    const redirectUrl = `http://localhost:3008/oauth-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+
+    return res.redirect(redirectUrl);
   }
 
   @Get('github')
@@ -28,8 +34,13 @@ export class OauthController {
 
   @Get('github/redirect')
   @UseGuards(AuthGuard('github'))
-  githubRedirect(@Req() req) {
-    return this.oauthService.handleOAuthLogin(req.user);
+  async githubRedirect(@Req() req: any, @Res() res: Response) {
+    const { accessToken, refreshToken } =
+      await this.oauthService.handleOAuthLogin(req.user);
+
+    const redirectUrl = `http://localhost:3008/oauth-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+
+    return res.redirect(redirectUrl);
   }
 
   @Get('naver')
@@ -40,7 +51,12 @@ export class OauthController {
 
   @Get('naver/redirect')
   @UseGuards(AuthGuard('naver'))
-  naverRedirect(@Req() req) {
-    return this.oauthService.handleOAuthLogin(req.user);
+  async naverRedirect(@Req() req: any, @Res() res: Response) {
+    const { accessToken, refreshToken } =
+      await this.oauthService.handleOAuthLogin(req.user);
+
+    const redirectUrl = `http://localhost:3008/oauth-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`;
+
+    return res.redirect(redirectUrl);
   }
 }
