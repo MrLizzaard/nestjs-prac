@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { ChatbotModule } from './modules/chatbot/chatbot.module';
 import { DreamLottoModule } from './modules/dream-lotto/dream-lotto.module';
 import { FrequencyModule } from './modules/frequency/frequency.module';
+import { GameModule } from './game/game.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { FrequencyModule } from './modules/frequency/frequency.module';
     ChatbotModule,
     DreamLottoModule,
     FrequencyModule,
+    GameModule,
   ],
   controllers: [AppController],
   providers: [AppService],
